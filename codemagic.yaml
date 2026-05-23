@@ -5,10 +5,10 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
-      groups:
-        - ios_signing
       flutter: stable
       xcode: latest
+      groups:
+        - ios_signing
 
     scripts:
       - name: Get Flutter packages
@@ -16,8 +16,9 @@ workflows:
 
       - name: Install certificate
         script: |
+          echo $CM_CERTIFICATE | base64 --decode > /tmp/ios_dev.p12
           keychain initialize
-          keychain add-certificates --certificate $CM_CERTIFICATE --certificate-password $CM_CERTIFICATE_PASSWORD
+          keychain add-certificates --certificate /tmp/ios_dev.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
 
       - name: Build signed iOS app
         script: flutter build ipa --release
